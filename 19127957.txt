@@ -1,0 +1,33 @@
+.data
+_x: .word 2
+_y: .word 3
+_i: .word 1
+.text
+.globl main
+main:
+#Write an assembly program to compute these operations:
+#1. x+y
+#2. x-y
+#3. x >> i
+#4. x << i
+#5. x xor y
+#6. x/y
+#load x, y , i from memory
+lw $s0, _x
+lw $s1, _y
+lw $s2, _i
+
+
+###your code here####
+add $t1,$s0,$s1
+sub $t2,$s0,$s1
+srl $s0,$s2,2
+sll $s0,$s2,2
+xor $t3,$s0,$s1
+div $t4,$s0,$s1
+
+#print out the result
+addi $v0, $zero, 1
+add $a0, $t0, $zero	#$t0: saves the integer to print
+syscall
+ 
