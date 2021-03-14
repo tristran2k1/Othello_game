@@ -1,8 +1,9 @@
-import itertools
-from typing import List, Any
+options = ['a1','f2','c3']
+move = []
+utility = [88,12,43]
+for i in range(3):
+    move.append([options[i],utility[i]])
+sorted_option = sorted(move,key=lambda x:x[1])
 
-posible_positions = []
-for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):
-    posible_positions.append(c + r)
-print(posible_positions)
+print(sorted_option)
 

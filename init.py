@@ -1,6 +1,8 @@
 import itertools
+from typing import List
 
 import numpy as np
+
 
 class Board:
     def __init__(self):
@@ -141,6 +143,8 @@ class Board:
         for (r, c) in changing_cells:
             self.data[r, c] = color
 
+        return self.data
+
     # cell_lines: only lines of the 'cell' variable in the string which
     #             is returned by Game.getInfo function
     def update(self, cell_lines):
@@ -149,7 +153,29 @@ class Board:
             for c in range(8):
                 self.data[r, c] = cells[c]
 
+    def isCorner(self,position):
+        return True if position in {'a1','a8','h1','h8'} else False
+
+    def isEdge(self,position):
+        return True if position in {'a1','a2','a3','a4','a5','a6','a7','a8',
+                                    'b1','c1','d1','e1','f1','g1','h1'} \
+            else False
+
+    def copy(self):
+        obj = Board()
+        obj.data = self.data
+        return obj
+
+    def move_(self):
+        self.data[1,3]='W'
+    def get_possible_moves(self,color):
+        possible_positions = []
+        for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):
+            if self.isPlaceable(c + r, color):
+                possible_positions.append(c + r)
+        return possible_positions
 class Game:
+
     def __init__(self):
         random_numbers = np.random.choice(64, 5, replace = False)
 
@@ -243,3 +269,11 @@ class Game:
     def addInfor(self,victory,cells):
         self.victory_cells = victory
         self.board = cells
+
+    def getVictoryCell(self):
+        return self.victory_cells
+
+def isVictory_cell(victory_cell,position):
+    return True if position in victory_cell else False
+
+

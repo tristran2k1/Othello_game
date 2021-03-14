@@ -1,7 +1,7 @@
 import itertools, random
 
 from init import *
-
+import copy
 def bot(victory_cell, cell, you):
     color = 'B' if you == "BLACK" else 'W'
 
@@ -14,7 +14,6 @@ def bot(victory_cell, cell, you):
         return random.choice(posible_positions)
     else:
         return "NULL"
-
 def callBot(game_info):
     lines = game_info.split('\n')
 
@@ -25,6 +24,8 @@ def callBot(game_info):
 
     you = lines[12]
     return bot(victory_cell, cell, you)
+
+
 def callBot_ai(game_info):
     lines = game_info.split('\n')
 
@@ -36,12 +37,17 @@ def callBot_ai(game_info):
     you = lines[12]
     return minimax_decision(victory_cell, cell, you)
 
-
-def heuristic(cell, whoseTurn) :
+def heuristic(cell, whoseTurn, victory_cell,current_cell) :                    #add victory_cell, cell_currently
     opponent = 'B' if whoseTurn == 'W' else 'W'
     ourScore, opponentScore = cell.getResult()
-    return (ourScore - opponentScore)
 
+    if cell.isCorner(current_cell):
+        ourScore+=4
+    if cell.isEdge(current_cell):
+        ourScore+=2
+    if isVictory_cell(victory_cell,current_cell):
+        ourScore+=1
+    return ourScore - opponentScore
 def minimax_decision(victory_cells,cell,you) :
     game_ai = Game()
     game_ai.addInfor(victory_cells,cell)
@@ -61,19 +67,19 @@ def minimax_decision(victory_cells,cell,you) :
 
         #Try out every single move
         for i in range(len(possible_positions)):
-            temp_cell = cell
+            temp_cell = Board()
+            temp_cell= copy.deepcopy(cell)
             temp_cell.place(possible_positions[i],whoseTurn)
-            val = minimaxValue(temp_cell,whoseTurn,opponent,5,game_ai)  #add possible_position[i]
+            val = minimaxValue(temp_cell,whoseTurn,opponent,0,game_ai,possible_positions[i])  #add possible_position[i]
             if best_move_val < val:
                 best_move_val = val
                 best_location = possible_positions[i]
         return best_location
     else :
         return "NULL"
-
-def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai):
-    if searchPly == 20 or game_ai.checkGameOver() == True:
-        return heuristic(cell,originalTurn)
+def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai,current_position):
+    if searchPly == 5 or game_ai.checkGameOver() == True:
+        return heuristic(cell,originalTurn,game_ai.getVictoryCell(),current_position)
     opponent = 'W' if currentTurn == 'B' else 'W'
 
     possible_positions = []
@@ -82,7 +88,7 @@ def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai):
             possible_positions.append(c + r)
 
     if len(possible_positions) > 0:
-        return minimaxValue(cell,originalTurn,opponent,searchPly+1,game_ai)
+        return minimaxValue(cell,originalTurn,opponent,searchPly+1,game_ai,current_position)
     else:
         #remember the best move
         best_move_val = -99999
@@ -95,7 +101,7 @@ def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai):
             temp_cell = cell.copy()
             temp_cell.place(possible_positions[i],currentTurn)
             #recursive call
-            val = minimaxValue(temp_cell,originalTurn,opponent,searchPly+1,game_ai)
+            val = minimaxValue(temp_cell,originalTurn,opponent,searchPly+1,game_ai,possible_positions[i])
             #remember best move
             if originalTurn == currentTurn:
                 if val > best_move_val:
@@ -105,7 +111,62 @@ def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai):
                     best_move_val = val
 
         return best_move_val
-    return 0
+
+
+# Python3 program to demonstrate
+# working of Alpha-Beta Pruning
+
+# Initial values of Aplha and Beta
+MAX, MIN = 1000, -1000
+
+
+# Returns optimal value for current player
+# (Initially called for root and maximizer)
+def minimax(depth, nodeIndex, maximizingPlayer,
+            values, alpha, beta):
+    # Terminating condition. i.e
+    # leaf node is reached
+    if depth == 3:
+        return values[nodeIndex]
+
+    if maximizingPlayer:
+
+        best = MIN
+
+        # Recur for left and right children
+        for i in range(0, 2):
+
+            val = minimax(depth + 1, nodeIndex * 2 + i,
+                          False, values, alpha, beta)
+            best = max(best, val)
+            alpha = max(alpha, best)
+
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                break
+
+        return best
+
+    else:
+        best = MAX
+
+        # Recur for left and
+        # right children
+        for i in range(0, 2):
+
+            val = minimax(depth + 1, nodeIndex * 2 + i,
+                          True, values, alpha, beta)
+            best = min(best, val)
+            beta = min(beta, best)
+
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                break
+
+        return best
+
+    # Driver Code
+
 
 
 
