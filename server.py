@@ -1,6 +1,6 @@
 import socketserver, random, re
 
-from init import Game
+from init import Game,ip
 from bot import callBot_ai,callBot
 
 class GameServerHandler(socketserver.BaseRequestHandler):
@@ -34,7 +34,7 @@ class GameServerHandler(socketserver.BaseRequestHandler):
         self.request.sendall(bytes(gameInstance.getFinalResult(), "ASCII"))
 
 if __name__ == "__main__":
-    HOST, PORT = "192.168.1.16", 14003
+    HOST, PORT = ip(), 14003
 
     with socketserver.TCPServer((HOST, PORT), GameServerHandler) as server:
         # Activate the server; this will keep running until you

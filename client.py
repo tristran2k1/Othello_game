@@ -1,9 +1,9 @@
 import socket, re
-
+from init import ip
 from bot import callBot
 from ai_v2 import callBot_ai
 
-HOST, PORT = "192.168.1.16", 14003
+HOST, PORT = ip(), 14003
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:

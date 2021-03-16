@@ -3,7 +3,8 @@ from typing import List
 
 import numpy as np
 
-
+def ip():
+    return "192.168.43.50"
 class Board:
     def __init__(self):
         self.data = np.array([['E'] * 8] * 8)
@@ -142,8 +143,9 @@ class Board:
         changing_cells = self.getFlips(position, color) + [(row_id, column_id)]
         for (r, c) in changing_cells:
             self.data[r, c] = color
-
         return self.data
+
+
 
     # cell_lines: only lines of the 'cell' variable in the string which
     #             is returned by Game.getInfo function
@@ -163,11 +165,55 @@ class Board:
 
     def copy(self):
         obj = Board()
-        obj.data = self.data
+        obj.data = self.data.copy()
         return obj
 
     def move_(self):
         self.data[1,3]='W'
+
+    def find_lines(board, i, j, player):
+        """
+        Find all the uninterupted lines of stones that would be captured if player
+        plays column i and row j.
+        """
+        lines = []
+        for xdir, ydir in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1],
+                           [-1, 0], [-1, 1]]:
+            u = i
+            v = j
+            line = []
+
+            u += xdir
+            v += ydir
+            found = False
+            while u >= 0 and u < len(board) and v >= 0 and v < len(board):
+                if board[v][u] == 0:
+                    break
+                elif board[v][u] == player:
+                    found = True
+                    break
+                else:
+                    line.append((u, v))
+                u += xdir
+                v += ydir
+            if found and line:
+                lines.append(line)
+        return lines
+
+    def play_move(board, player, i, j):
+        new_board = []
+        for row in board:
+            new_board.append(list(row[:]))
+        lines = board.find_lines(board, i, j, player)
+        new_board[j][i] = player
+        for line in lines:
+            for u, v in line:
+                new_board[v][u] = player
+        final = []
+        for row in new_board:
+            final.append(tuple(row))
+        return tuple(final)
+
     def get_possible_moves(self,color):
         possible_positions = []
         for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):

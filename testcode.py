@@ -5,5 +5,8 @@ for i in range(3):
     move.append([options[i],utility[i]])
 sorted_option = sorted(move,key=lambda x:x[1])
 
-print(sorted_option)
+print(sorted_option[0][0])
 
+
+#color : 'W' 'B'
+#you: 'BLACK'
