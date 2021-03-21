@@ -1,7 +1,7 @@
 import socket, re
 from init import ip
 from bot import callBot
-from ai_v2 import callBot_ai
+from bot import callBot_ai
 
 HOST, PORT = ip(), 14003
 

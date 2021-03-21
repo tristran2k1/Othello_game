@@ -39,14 +39,8 @@ def callBot_ai(game_info):
 
 def heuristic(cell, whoseTurn, victory_cell,current_cell) :                    #add victory_cell, cell_currently
     opponent = 'B' if whoseTurn == 'W' else 'W'
-    ourScore, opponentScore = cell.getResult()
+    ourScore, opponentScore = cell.getResultEdge(victory_cell)          #sai teen
 
-    if cell.isCorner(current_cell):
-        ourScore+=4
-    if cell.isEdge(current_cell):
-        ourScore+=2
-    if isVictory_cell(victory_cell,current_cell):
-        ourScore+=1
     return ourScore - opponentScore
 def minimax_decision(victory_cells,cell,you) :
     game_ai = Game()
@@ -67,8 +61,8 @@ def minimax_decision(victory_cells,cell,you) :
 
         #Try out every single move
         for i in range(len(possible_positions)):
-            temp_cell = Board()
-            temp_cell= copy.deepcopy(cell)
+            #temp_cell = Board()
+            temp_cell= cell.copy()
             temp_cell.place(possible_positions[i],whoseTurn)
             val = minimaxValue(temp_cell,whoseTurn,opponent,0,game_ai,possible_positions[i])  #add possible_position[i]
             if best_move_val < val:
@@ -78,7 +72,7 @@ def minimax_decision(victory_cells,cell,you) :
     else :
         return "NULL"
 def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai,current_position):
-    if searchPly == 5 or game_ai.checkGameOver() == True:
+    if searchPly == 10 or game_ai.checkGameOver() == True:
         return heuristic(cell,originalTurn,game_ai.getVictoryCell(),current_position)
     opponent = 'W' if currentTurn == 'B' else 'W'
 

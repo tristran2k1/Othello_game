@@ -4,9 +4,10 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "192.168.43.50"
+    return "192.168.1.5"
 class Board:
     def __init__(self):
+        self.whoseTurn = "B"
         self.data = np.array([['E'] * 8] * 8)
         self.data[3, 3] = self.data[4, 4] = 'W'
         self.data[3, 4] = self.data[4, 3] = 'B'
@@ -95,6 +96,32 @@ class Board:
             b += 1 if self.data[r, c] == 'B' else 0
             w += 1 if self.data[r, c] == 'W' else 0
         return b, w
+
+    # return: (int, int) ~ (b, w)
+    def getResultEdge(self,victory_cell):
+        b, w = 0, 0
+        for (r, c) in itertools.product(range(8), range(8)):
+            if self.data[r, c] == 'B':
+                if self.isCorner(self.data[r, c]):
+                    b += 10
+                if self.isEdge(self.data[r, c]):
+                    b += 5
+                if isVictory_cell(victory_cell, self.data[r, c]):
+                    b += 20
+                else:
+                    b += 1
+            if self.data[r, c] == 'W':
+                if self.isCorner(self.data[r, c]):
+                    w += 10
+                if self.isEdge(self.data[r, c]):
+                    w += 5
+                if isVictory_cell(victory_cell, self.data[r, c]):
+                    w += 20
+                else:
+                    w+=1
+
+        return b, w
+
 
     # position: "^\w\d$"
     # direction: (int, int) ~ (r, c)
@@ -299,27 +326,35 @@ class Game:
         return s
 
     def getFinalResult(self):
+
         s = ""
 
         if not self.checkGameOver():
             return s
-
+        s += self.getInfo()
         s += "history\n"
         s += " ".join(self.history) + "\n"
 
         s += "winner\n"
         s += self.getWinner() + "\n"
+        b,w = self.board.getResult()
+
+        s +="Black: "
+        s+=str(b)
+        s+="White"
+        s+=str(w)
 
         return s
 
     def addInfor(self,victory,cells):
         self.victory_cells = victory
-        self.board = cells
+        self.board = cells.copy()
 
     def getVictoryCell(self):
         return self.victory_cells
 
 def isVictory_cell(victory_cell,position):
     return True if position in victory_cell else False
+
 
 
