@@ -34,70 +34,79 @@ def callBot_ai(game_info):
     cell = Board()
     cell.update(lines[3:11])
 
-    you = lines[12]
-    return minimax_decision(victory_cell, cell, you)
+    #you = lines[12]
 
-def heuristic(cell, whoseTurn, victory_cell,current_cell) :                    #add victory_cell, cell_currently
-    opponent = 'B' if whoseTurn == 'W' else 'W'
-    ourScore, opponentScore = cell.getResultEdge(victory_cell)          #sai teen
+    cell.setVictoryCell(victory_cell)
+    cell.setCurrentPlayer('W')
+    x,y = minimax_decision(cell)
 
-    return ourScore - opponentScore
-def minimax_decision(victory_cells,cell,you) :
-    game_ai = Game()
-    game_ai.addInfor(victory_cells,cell)
-
-    whoseTurn = 'B' if you == "BLACK" else 'W'
-    opponent = 'W'if whoseTurn =='B' else 'W'
-
-    possible_positions = []
-    for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):
-        if cell.isPlaceable(c + r, whoseTurn):
-            possible_positions.append(c + r)
-
-    if len(possible_positions) > 0:
-        #remember the best move
-        best_move_val = -99999
-        best_location = possible_positions[0]
-
-        #Try out every single move
-        for i in range(len(possible_positions)):
-            #temp_cell = Board()
-            temp_cell= cell.copy()
-            temp_cell.place(possible_positions[i],whoseTurn)
-            val = minimaxValue(temp_cell,whoseTurn,opponent,0,game_ai,possible_positions[i])  #add possible_position[i]
-            if best_move_val < val:
-                best_move_val = val
-                best_location = possible_positions[i]
-        return best_location
-    else :
+    if x == -1:
         return "NULL"
-def minimaxValue(cell,originalTurn, currentTurn,searchPly,game_ai,current_position):
-    if searchPly == 10 or game_ai.checkGameOver() == True:
-        return heuristic(cell,originalTurn,game_ai.getVictoryCell(),current_position)
-    opponent = 'W' if currentTurn == 'B' else 'W'
+    else:
+        x = x + 1
+        alphabet_col = ['a','b','c','d','e','f','g','h']
+        result = str(alphabet_col[y])+str(x)
+        return result
 
-    possible_positions = []
-    for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):
-        if cell.isPlaceable(c + r, currentTurn):
-            possible_positions.append(c + r)
 
-    if len(possible_positions) > 0:
-        return minimaxValue(cell,originalTurn,opponent,searchPly+1,game_ai,current_position)
+def minimax_decision(board) :
+    moveX = []
+    moveY = []
+    opponent = board.getOpponentPiece()
+    numMoves = board.getMoveList(moveX,moveY)
+    print(numMoves)
+    if numMoves == 0:
+        x = -1
+        y = -1
+        return x,y
+
+    bestMoveVal = -99999
+    bestX = moveX[0]
+    bestY = moveY[0]
+
+    for i in range (numMoves):
+        tempBoard = Board()
+        tempBoard = board.copy()
+        tempBoard.makeMove(moveX[i],moveY[i])
+        tempBoard.setCurrentPlayer(tempBoard.getOpponentPiece())
+        val = minimaxValue(tempBoard,board.getWhosePiece(),1)
+
+        if val > bestMoveVal:
+            bestMoveVal = val
+            bestX = moveX[i]
+            bestY = moveY[i]
+    return bestX, bestY
+
+def minimaxValue(board, originalTurn, searchPly):
+    if searchPly == 2 or board.gameOver() == True:
+        return board.heuristic(originalTurn)
+
+    moveX = []
+    moveY = []
+    opponent = board.getOpponentPiece()
+    numMoves = board.getMoveList(moveX,moveY)
+
+    if numMoves == 0:
+        tempBoard = Board()
+        tempBoard = board.copy()
+        tempBoard.setCurrentPlayer(opponent)
+        return minimaxValue(tempBoard,originalTurn, searchPly + 1)
     else:
         #remember the best move
         best_move_val = -99999
-        if originalTurn != currentTurn:
+        if originalTurn != board.getWhosePiece():
             best_move_val = 99999
 
         #Try out every single move
-        for i in range(len(possible_positions)):
-            #apply the new board
-            temp_cell = cell.copy()
-            temp_cell.place(possible_positions[i],currentTurn)
+        for i in range (numMoves):
+            tempBoard = Board()
+            tempBoard = board.copy()
+            tempBoard.makeMove(moveX[i],moveY[i])
+            tempBoard.setCurrentPlayer(tempBoard.getOpponentPiece())
             #recursive call
-            val = minimaxValue(temp_cell,originalTurn,opponent,searchPly+1,game_ai,possible_positions[i])
+            val = minimaxValue(tempBoard,originalTurn,searchPly+1)
             #remember best move
-            if originalTurn == currentTurn:
+            if originalTurn == board.getWhosePiece():
                 if val > best_move_val:
                     best_move_val = val
             else :

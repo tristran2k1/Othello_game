@@ -4,13 +4,15 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "192.168.1.5"
+    return "192.168.1.2"
 class Board:
     def __init__(self):
-        self.whoseTurn = "B"
+        self.victoryCell = []
+        self.whoseTurn = 'B'
         self.data = np.array([['E'] * 8] * 8)
         self.data[3, 3] = self.data[4, 4] = 'W'
         self.data[3, 4] = self.data[4, 3] = 'B'
+
 
     # numeric_character: "12345678"
     # return: index of row
@@ -98,7 +100,7 @@ class Board:
         return b, w
 
     # return: (int, int) ~ (b, w)
-    def getResultEdge(self,victory_cell):
+    def getResultEdge(self):
         b, w = 0, 0
         for (r, c) in itertools.product(range(8), range(8)):
             if self.data[r, c] == 'B':
@@ -106,7 +108,7 @@ class Board:
                     b += 10
                 if self.isEdge(self.data[r, c]):
                     b += 5
-                if isVictory_cell(victory_cell, self.data[r, c]):
+                if isVictory_cell(self.victoryCell, self.data[r, c]):
                     b += 20
                 else:
                     b += 1
@@ -115,7 +117,9 @@ class Board:
                     w += 10
                 if self.isEdge(self.data[r, c]):
                     w += 5
-                if isVictory_cell(victory_cell, self.data[r, c]):
+                alphabet_col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+                result = str(alphabet_col[c]) + str(r)
+                if isVictory_cell(self.victoryCell, self.data[r, c]):
                     w += 20
                 else:
                     w+=1
@@ -172,8 +176,6 @@ class Board:
             self.data[r, c] = color
         return self.data
 
-
-
     # cell_lines: only lines of the 'cell' variable in the string which
     #             is returned by Game.getInfo function
     def update(self, cell_lines):
@@ -193,6 +195,8 @@ class Board:
     def copy(self):
         obj = Board()
         obj.data = self.data.copy()
+        obj.victoryCell = self.victoryCell
+        obj.whoseTurn = self.whoseTurn
         return obj
 
     def move_(self):
@@ -247,11 +251,150 @@ class Board:
             if self.isPlaceable(c + r, color):
                 possible_positions.append(c + r)
         return possible_positions
-class Game:
 
+    ###ADD
+    def setVictoryCell(self,victoryCell):
+        self.victoryCell = victoryCell
+
+    #Checks a direction from x, y to see if we can make a move
+    def checkFlip(self, x, y, deltaX, deltaY):
+        if (x >= 0) and (x < 8) and (y >= 0) and (y < 8):
+            opponentPiece = self.getOpponentPiece()
+            myPiece = self.whoseTurn
+
+            if self.data[x][y] == opponentPiece:
+                while (x >= 0) and (x < 8) and (y >= 0) and (y < 8):
+                    x += deltaX
+                    y += deltaY
+
+                    if (x >= 0) and (x < 8) and (y >= 0) and (y < 8):
+                        if self.data[x][y] == 'E':
+                            return False
+                        if self.data[x][y] == myPiece:
+                            return True
+                        else:
+                            # It is an opponent piece, just keep scanning in our direction
+                            continue
+            return False
+        return False
+
+
+    def flipPieces(self,x,y,deltaX,deltaY):
+
+        while  ((x >= 0) and (x < 8) and (y >= 0) and (y < 8)) and (self.data[x][y] == self.getOpponentPiece()):
+            self.data[x][y] = self.whoseTurn
+            x += deltaX
+            y += deltaX
+
+    def getWhosePiece(self):
+        return self.whoseTurn
+
+    def getOpponentPiece(self):
+        if self.whoseTurn == 'B':
+            return 'W'
+        return 'B'
+
+    def setCurrentPlayer(self, player):
+        self.whoseTurn = player
+    #def display(self):
+
+    def makeMove(self,x,y):
+        self.data[x][y] = self.whoseTurn
+
+        #check to the left
+        if self.checkFlip(x - 1, y, -1, 0):
+            self.flipPieces(x - 1, y, -1, 0)
+        #check to the right
+        if self.checkFlip(x + 1, y, 1, 0):
+            self.flipPieces(x + 1, y, 1, 0)
+        # check down
+        if self.checkFlip(x, y-1, 0, -1):
+            self.flipPieces(x , y-1, 0, -1)
+        # check up
+        if self.checkFlip(x, y + 1, 0, 1):
+            self.flipPieces(x, y + 1, 0, 1)
+        #Check down - left
+        if self.checkFlip(x - 1, y - 1, -1, -1):
+            self.flipPieces(x - 1, y - 1, -1, -1)
+        #Check down - right
+        if self.checkFlip(x + 1, y - 1, 1, -1):
+            self.flipPieces(x + 1, y - 1, 1, -1)
+        #Check up - left
+        if self.checkFlip(x - 1, y + 1, -1, 1):
+            self.flipPieces(x - 1, y + 1, -1, 1)
+        #Check up - right
+        if self.checkFlip(x + 1, y + 1, 1, 1):
+            self.flipPieces(x + 1, y + 1, 1, 1)
+
+    def validMove(self,x,y):
+        #Check that the coordinates are empty
+        if self.data[x][y] != 'E':
+            return False
+        #If we can flip in any direction, it is valid
+        #Check to the left
+        if self.checkFlip(x - 1, y, -1, 0):
+            return True
+        #Check to the right
+        if self.checkFlip(x + 1, y, 1, 0):
+            return True
+        #Check down
+        if self.checkFlip(x, y - 1, 0, -1):
+            return True
+        #Check up
+        if self.checkFlip(x, y + 1, 0, 1):
+            return True
+        #Check down - left
+        if self.checkFlip(x - 1, y - 1, -1, -1):
+            return True
+        #Check down - right
+        if self.checkFlip(x + 1, y - 1, 1, -1):
+            return True
+        #Check up - left
+        if self.checkFlip(x - 1, y + 1, -1, 1):
+            return True
+        #Check up - right
+        if self.checkFlip(x + 1, y + 1, 1, 1):
+            return True
+
+        return False #If we get here, we didn't find a valid flip direction
+
+    def getMoveList(self, moveX: list, moveY):
+        numMove = 0
+        for x in range(8):
+            for y in range(8):
+                if self.validMove(x, y):
+                    moveX.append(x)
+                    moveY.append(y)
+                    numMove+=1
+
+        return numMove
+
+    #True if the game is over, false if not over
+    def gameOver(self):
+        XMoveX = []
+        XMoveY = []
+        OMoveX = []
+        OMoveY = []
+
+        numXMoves = self.getMoveList(XMoveX,XMoveY)
+        #Temporarily flip whoseturn to opponent to get opponent move list
+        whoseTurn = self.getOpponentPiece()
+        numOMoves = self.getMoveList(OMoveX,OMoveY)
+        whoseTurn = self.getOpponentPiece() #Flip back to original
+
+        if numXMoves == 0 and numOMoves == 0:
+            return True
+        return False
+
+    def heuristic(self, whoseTurn):  # add victory_cell, cell_currently
+        opponent = 'B' if whoseTurn == 'W' else 'W'
+        ourScore, opponentScore = self.getResultEdge()  # sai teen
+        return ourScore - opponentScore
+
+
+class Game:
     def __init__(self):
         random_numbers = np.random.choice(64, 5, replace = False)
-
         self.victory_cells = [chr(x // 8 + ord('a')) + chr(x % 8 + ord('1')) for x in random_numbers]
         self.board = Board()
         self.history = []
