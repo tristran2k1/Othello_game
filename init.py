@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "192.168.1.2"
+    return "172.16.7.108"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -278,7 +278,6 @@ class Board:
             return False
         return False
 
-
     def flipPieces(self,x,y,deltaX,deltaY):
 
         while  ((x >= 0) and (x < 8) and (y >= 0) and (y < 8)) and (self.data[x][y] == self.getOpponentPiece()):
@@ -387,10 +386,14 @@ class Board:
         return False
 
     def heuristic(self, whoseTurn):  # add victory_cell, cell_currently
-        opponent = 'B' if whoseTurn == 'W' else 'W'
         ourScore, opponentScore = self.getResultEdge()  # sai teen
-        return ourScore - opponentScore
+        if whoseTurn =='B':
+            return ourScore - opponentScore
+        else:
+            return opponentScore - ourScore
 
+    def getData(self):
+        return self.data
 
 class Game:
     def __init__(self):

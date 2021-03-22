@@ -1,7 +1,6 @@
 import itertools, random
-
 from init import *
-import copy
+
 def bot(victory_cell, cell, you):
     color = 'B' if you == "BLACK" else 'W'
 
@@ -25,14 +24,13 @@ def callBot(game_info):
     you = lines[12]
     return bot(victory_cell, cell, you)
 
-
 def callBot_ai(game_info):
     lines = game_info.split('\n')
 
     victory_cell = lines[1].split(' ')
-
     cell = Board()
     cell.update(lines[3:11])
+    #print(cell.data)
 
     #you = lines[12]
 
@@ -41,12 +39,14 @@ def callBot_ai(game_info):
     x,y = minimax_decision(cell)
 
     if x == -1:
-        return "NULL"
+        result = "NULL"
     else:
         x = x + 1
         alphabet_col = ['a','b','c','d','e','f','g','h']
         result = str(alphabet_col[y])+str(x)
-        return result
+    cell.makeMove(x-1, y)
+    print(cell.getData())
+    return result
 
 
 def minimax_decision(board) :

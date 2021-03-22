@@ -9,7 +9,6 @@ class GameServerHandler(socketserver.BaseRequestHandler):
 
         isPlayFirst = True
         if isPlayFirst:
-            print(gameInstance.getNextTurn())
             gameInstance.setNextTurn(callBot(gameInstance.getInfo()))
 
         while not gameInstance.checkGameOver():
@@ -28,7 +27,6 @@ class GameServerHandler(socketserver.BaseRequestHandler):
                 return
 
             if not gameInstance.checkGameOver():
-                print(gameInstance.getNextTurn())
                 gameInstance.setNextTurn(callBot(gameInstance.getInfo()))
 
         self.request.sendall(bytes(gameInstance.getFinalResult(), "ASCII"))

@@ -13,7 +13,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     while True:
         ret = str(sock.recv(1024), "ASCII")
         print(ret)
+        if "winner" in ret:
+            print("\nEND GAME!")
+            break
         if re.match("victory_cell", ret) is None:
             break
         else:
             sock.sendall(bytes(callBot_ai(ret), "ASCII"))
+
+
