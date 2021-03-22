@@ -1,4 +1,5 @@
 import socket, re
+import os
 from init import ip
 from bot import callBot
 from bot import callBot_ai
@@ -15,6 +16,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         print(ret)
         if "winner" in ret:
             print("\nEND GAME!")
+            os.system('pause')
             break
         if re.match("victory_cell", ret) is None:
             break

@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "172.16.7.108"
+    return "192.168.1.5"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -395,6 +395,16 @@ class Board:
     def getData(self):
         return self.data
 
+    def numalpha_To_Numnum(self):
+        victory_numnum = np.array([[0] * len(self.victoryCell)] * 2)
+        for i in range(len(self.victoryCell)):
+            alphabet_character, numeric_character = tuple(self.victoryCell[i])
+            row_id = self.getRowId(numeric_character)
+            column_id = self.getColumnId(alphabet_character)
+            victory_numnum[0][i] = row_id
+            victory_numnum[1][i] = column_id
+        return victory_numnum
+
 class Game:
     def __init__(self):
         random_numbers = np.random.choice(64, 5, replace = False)
@@ -501,6 +511,9 @@ class Game:
 
 def isVictory_cell(victory_cell,position):
     return True if position in victory_cell else False
+
+
+
 
 
 
