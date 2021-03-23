@@ -16,7 +16,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         print(ret)
         if "winner" in ret:
             print("\nEND GAME!")
-            os.system('pause')
+            callBot_ai(ret)
             break
         if re.match("victory_cell", ret) is None:
             break

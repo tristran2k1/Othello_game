@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "192.168.1.5"
+    return "10.10.113.241"
 class Board:
     def __init__(self):
         self.victoryCell = []

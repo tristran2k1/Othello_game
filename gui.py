@@ -4,7 +4,7 @@ import random
 import numpy as np
 from pygame.locals import *
 
-def GUI(cell, victory_cell):
+def GUI(cell, victory_cell,winner):
     pygame.init()
     WINDOWSWIDTH = 960
     WINDOWSHEIGHT = 640
@@ -83,6 +83,15 @@ def GUI(cell, victory_cell):
 
         pygame.display.flip()
         FPSClock.tick(FPS)"""
+    if winner is not None:
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+            display(board, (90, 90))
+            pygame.display.flip()
+            FPSClock.tick(FPS)
+
     display(board, (90, 90))
     pygame.display.flip()
     FPSClock.tick(FPS)

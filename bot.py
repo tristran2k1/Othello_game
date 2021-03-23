@@ -31,14 +31,18 @@ def callBot_ai(game_info):
     victory_cell = lines[1].split(' ')
     cell = Board()
     cell.update(lines[3:11])
-    #print(cell.data)
 
-    #you = lines[12]
 
     cell.setVictoryCell(victory_cell)
+
+    if "winner" in game_info:
+        winner = lines[16]
+        print(winner)
+        GUI(cell.getData(), cell.numalpha_To_Numnum(), winner)
+
     cell.setCurrentPlayer('W')
 
-    GUI(cell.getData(),cell.numalpha_To_Numnum())
+    GUI(cell.getData(),cell.numalpha_To_Numnum(),None)
     x,y = minimax_decision(cell)
 
     if x == -1:
@@ -48,7 +52,7 @@ def callBot_ai(game_info):
         alphabet_col = ['a','b','c','d','e','f','g','h']
         result = str(alphabet_col[y])+str(x)
     cell.makeMove(x-1, y)
-    GUI(cell.getData(),cell.numalpha_To_Numnum())
+    GUI(cell.getData(),cell.numalpha_To_Numnum(),None)
     #print(cell.getData())
     return result
 
