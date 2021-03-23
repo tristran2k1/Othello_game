@@ -16,6 +16,7 @@ class GameServerHandler(socketserver.BaseRequestHandler):
             self.request.sendall(bytes(gameInstance.getInfo(), "ASCII"))
             try:
                 ret = str(self.request.recv(8), "ASCII")
+                print(ret)
             except:
                 self.request.sendall(bytes("ERROR: INVALID ASCII STRING ~ " + repr(ret), "ASCII"))
                 return

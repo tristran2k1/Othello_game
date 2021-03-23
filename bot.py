@@ -34,15 +34,17 @@ def callBot_ai(game_info):
 
 
     cell.setVictoryCell(victory_cell)
-
+    alpha = GUI(cell.getData(),cell.numalpha_To_Numnum())
+    alpha.drawVictoryCell()
     if "winner" in game_info:
         winner = lines[16]
-        print(winner)
-        GUI(cell.getData(), cell.numalpha_To_Numnum(), winner)
-
+    else:
+        winner = None
+    alpha.run(winner)
     cell.setCurrentPlayer('W')
 
-    GUI(cell.getData(),cell.numalpha_To_Numnum(),None)
+    #alpha.__init__(cell.getData(),cell.numalpha_To_Numnum())
+    alpha.run(winner)
     x,y = minimax_decision(cell)
 
     if x == -1:
@@ -52,7 +54,8 @@ def callBot_ai(game_info):
         alphabet_col = ['a','b','c','d','e','f','g','h']
         result = str(alphabet_col[y])+str(x)
     cell.makeMove(x-1, y)
-    GUI(cell.getData(),cell.numalpha_To_Numnum(),None)
+    #alpha.__init__(cell.getData(),cell.numalpha_To_Numnum(),None)
+    alpha.run(winner)
     #print(cell.getData())
     return result
 
@@ -62,7 +65,7 @@ def minimax_decision(board) :
     moveY = []
     opponent = board.getOpponentPiece()
     numMoves = board.getMoveList(moveX,moveY)
-    print(numMoves)
+    #print(numMoves)
     if numMoves == 0:
         x = -1
         y = -1

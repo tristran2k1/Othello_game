@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "10.10.113.241"
+    return "10.10.192.36"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -102,6 +102,7 @@ class Board:
     # return: (int, int) ~ (b, w)
     def getResultEdge(self):
         b, w = 0, 0
+        v_b, v_w =0, 0
         for (r, c) in itertools.product(range(8), range(8)):
             if self.data[r, c] == 'B':
                 if self.isCorner(self.data[r, c]):
@@ -109,6 +110,7 @@ class Board:
                 if self.isEdge(self.data[r, c]):
                     b += 5
                 if isVictory_cell(self.victoryCell, self.data[r, c]):
+                    v_b += 1
                     b += 20
                 else:
                     b += 1
@@ -120,10 +122,14 @@ class Board:
                 alphabet_col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
                 result = str(alphabet_col[c]) + str(r)
                 if isVictory_cell(self.victoryCell, self.data[r, c]):
+                    v_w += 1
                     w += 20
                 else:
                     w+=1
-
+        if v_b == 5:
+            b = 99999
+        elif v_w ==5:
+            v = 99999
         return b, w
 
 

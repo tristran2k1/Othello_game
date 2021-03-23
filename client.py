@@ -21,6 +21,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         if re.match("victory_cell", ret) is None:
             break
         else:
-            sock.sendall(bytes(callBot_ai(ret), "ASCII"))
+            s = callBot_ai(ret)
+            print(s)
+            sock.sendall(bytes(s, "ASCII"))
 
 
