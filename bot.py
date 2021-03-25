@@ -3,7 +3,6 @@ from init import *
 from gui import GUI
 
 
-
 def bot(victory_cell, cell, you):
     color = 'B' if you == "BLACK" else 'W'
 
@@ -27,7 +26,6 @@ def callBot(game_info):
     you = lines[12]
     return bot(victory_cell, cell, you)
 
-
 # Initial values of Alpha and Beta
 MAX, MIN = 1000, -1000
 
@@ -36,8 +34,8 @@ def callBot_ai(game_info):
 
     victory_cell = lines[1].split(' ')
     cell = Board()
-    cell.update(lines[3:11])
 
+    cell.update(lines[3:11])
 
     cell.setVictoryCell(victory_cell)
     alpha = GUI(cell.getData(),cell.numalpha_To_Numnum())
@@ -62,6 +60,7 @@ def callBot_ai(game_info):
         result = str(alphabet_col[y])+str(x)
     cell.makeMove(x-1, y)
     alpha = GUI(cell.getData(),cell.numalpha_To_Numnum())
+    alpha.drawVictoryCell()
     alpha.run(winner)
     return result
 
@@ -132,8 +131,7 @@ def minimaxValue(board, originalTurn, searchPly):
         return best_move_val
 
 def minimaxValueAlphaBeta(board, originalTurn, searchPly, beta, alpha):
-    if (searchPly == 20 ) or board.gameOver(): # Change to desired ply lookahead
-        #return board.heuristicEdge(originalTurn) # Edge
+    if (searchPly == 30 ) or board.gameOver(): # Change to desired ply lookahead
         return board.heuristic(originalTurn) # Termination criteria
 
     moveX = []

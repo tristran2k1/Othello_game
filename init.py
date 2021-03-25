@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "172.16.5.181"
+    return "172.16.3.224"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -103,44 +103,30 @@ class Board:
     def getResultEdge(self):
         b, w = 0, 0
         v_b, v_w =0, 0
+        alphabet = ['a','b','c','d','e','f','g','h']
+
         for (r, c) in itertools.product(range(8), range(8)):
             if self.data[r, c] == 'B':
-                if self.isCorner(self.data[r, c]):
-                    b += 50
-                if self.isEdge(self.data[r, c]):
+                if self.isCorner((alphabet[c],r)):
                     b += 20
-                if isVictory_cell(self.victoryCell, self.data[r, c]):
+                if self.isEdge((alphabet[c],r)):
+                    b += 7
+                if isVictory_cell(self.victoryCell, (alphabet[c],r)):
                     v_b += 1
-                    b += 30
+                    b += 10
                 else:
                     b += 1
             if self.data[r, c] == 'W':
-                if self.isCorner(self.data[r, c]):
-                    w += 50
-                if self.isEdge(self.data[r, c]):
+                if self.isCorner((alphabet[c],r)):
                     w += 20
-                if isVictory_cell(self.victoryCell, self.data[r, c]):
+                if self.isEdge((alphabet[c],r)):
+                    w += 7
+                if isVictory_cell(self.victoryCell,(alphabet[c],r)):
                     v_w += 1
-                    w += 30
+                    w += 10
                 else:
                     w+=1
-        tempBoard = Board()
-        tempBoard = self.copy()
-        tmpX = []
-        tmpY = []
-        numMovesA = tempBoard.getMoveList(tmpX,tmpY)
-        tempBoard.setCurrentPlayer(tempBoard.getOpponentPiece())
 
-        numMovesB = tempBoard.getMoveList(tmpX,tmpY)
-        if self.getWhosePiece() == 'B':#white is no change
-            tmp = numMovesB
-            numMovesB = numMovesA
-            numMovesA = tmp
-        #white = numMovesA, black = numMovesB
-        if numMovesA == 0 and numMovesB != 0:
-            w = -99999
-        elif numMovesB == 0 and numMovesA != 0:
-            b = -99999
         if v_b == 5:
             b = 99999
         elif v_w ==5:
@@ -316,7 +302,6 @@ class Board:
 
     def setCurrentPlayer(self, player):
         self.whoseTurn = player
-    #def display(self):
 
     def makeMove(self,x,y):
         self.data[x][y] = self.whoseTurn
@@ -517,7 +502,7 @@ class Game:
 
         s +="Black: "
         s+=str(b)
-        s+="White"
+        s+="\nWhite: "
         s+=str(w)
 
         return s
