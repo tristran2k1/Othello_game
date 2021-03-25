@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 def ip():
-    return "10.10.192.36"
+    return "172.16.5.181"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -106,30 +106,45 @@ class Board:
         for (r, c) in itertools.product(range(8), range(8)):
             if self.data[r, c] == 'B':
                 if self.isCorner(self.data[r, c]):
-                    b += 10
+                    b += 50
                 if self.isEdge(self.data[r, c]):
-                    b += 5
+                    b += 20
                 if isVictory_cell(self.victoryCell, self.data[r, c]):
                     v_b += 1
-                    b += 20
+                    b += 30
                 else:
                     b += 1
             if self.data[r, c] == 'W':
                 if self.isCorner(self.data[r, c]):
-                    w += 10
+                    w += 50
                 if self.isEdge(self.data[r, c]):
-                    w += 5
-                alphabet_col = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-                result = str(alphabet_col[c]) + str(r)
+                    w += 20
                 if isVictory_cell(self.victoryCell, self.data[r, c]):
                     v_w += 1
-                    w += 20
+                    w += 30
                 else:
                     w+=1
+        tempBoard = Board()
+        tempBoard = self.copy()
+        tmpX = []
+        tmpY = []
+        numMovesA = tempBoard.getMoveList(tmpX,tmpY)
+        tempBoard.setCurrentPlayer(tempBoard.getOpponentPiece())
+
+        numMovesB = tempBoard.getMoveList(tmpX,tmpY)
+        if self.getWhosePiece() == 'B':#white is no change
+            tmp = numMovesB
+            numMovesB = numMovesA
+            numMovesA = tmp
+        #white = numMovesA, black = numMovesB
+        if numMovesA == 0 and numMovesB != 0:
+            w = -99999
+        elif numMovesB == 0 and numMovesA != 0:
+            b = -99999
         if v_b == 5:
             b = 99999
         elif v_w ==5:
-            v = 99999
+            w = 99999
         return b, w
 
 
@@ -223,7 +238,7 @@ class Board:
             u += xdir
             v += ydir
             found = False
-            while u >= 0 and u < len(board) and v >= 0 and v < len(board):
+            while 0 <= u < len(board) and 0 <= v < len(board):
                 if board[v][u] == 0:
                     break
                 elif board[v][u] == player:
@@ -363,7 +378,7 @@ class Board:
 
         return False #If we get here, we didn't find a valid flip direction
 
-    def getMoveList(self, moveX: list, moveY):
+    def getMoveList(self, moveX, moveY):
         numMove = 0
         for x in range(8):
             for y in range(8):
@@ -449,7 +464,6 @@ class Game:
                 self.winner = "WHITE" if v_b < v_w else self.winner
                 self.winner = "DRAW" if v_b == v_w else self.winner
             return True
-
         return False
 
     def setNextTurn(self, position):
