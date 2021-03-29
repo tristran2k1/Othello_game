@@ -3,7 +3,7 @@ import os
 from init import ip
 from bot import callBot
 from bot import callBot_ai
-
+import os
 HOST, PORT = ip(), 14003
 
 # Create a socket (SOCK_STREAM means a TCP socket)

@@ -1,7 +1,7 @@
 import socketserver, random, re
 
 from init import Game,ip
-from bot import callBot_ai,callBot
+from bot import callBot
 
 class GameServerHandler(socketserver.BaseRequestHandler):
     def handle(self):

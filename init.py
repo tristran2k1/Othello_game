@@ -1,10 +1,9 @@
 import itertools
-from typing import List
 
 import numpy as np
 
 def ip():
-    return "172.16.3.224"
+    return "10.124.6.245"
 class Board:
     def __init__(self):
         self.victoryCell = []
@@ -12,7 +11,6 @@ class Board:
         self.data = np.array([['E'] * 8] * 8)
         self.data[3, 3] = self.data[4, 4] = 'W'
         self.data[3, 4] = self.data[4, 3] = 'B'
-
 
     # numeric_character: "12345678"
     # return: index of row
@@ -110,29 +108,28 @@ class Board:
                 if self.isCorner((alphabet[c],r)):
                     b += 20
                 if self.isEdge((alphabet[c],r)):
-                    b += 7
+                    b += 10
                 if isVictory_cell(self.victoryCell, (alphabet[c],r)):
                     v_b += 1
-                    b += 10
+                    b += 20
                 else:
-                    b += 1
+                    b += 2
             if self.data[r, c] == 'W':
                 if self.isCorner((alphabet[c],r)):
                     w += 20
                 if self.isEdge((alphabet[c],r)):
-                    w += 7
+                    w += 10
                 if isVictory_cell(self.victoryCell,(alphabet[c],r)):
                     v_w += 1
-                    w += 10
+                    w += 20
                 else:
-                    w+=1
+                    w+=2
 
         if v_b == 5:
             b = 99999
-        elif v_w ==5:
+        elif v_w == 5:
             w = 99999
         return b, w
-
 
     # position: "^\w\d$"
     # direction: (int, int) ~ (r, c)
@@ -189,8 +186,10 @@ class Board:
         for r in range(8):
             cells = cell_lines[r].split(' ')
             for c in range(8):
-                self.data[r, c] = cells[c]
-
+                try:
+                    self.data[r, c] = cells[c]
+                except:
+                    return
     def isCorner(self,position):
         return True if position in {'a1','a8','h1','h8'} else False
 
@@ -205,59 +204,6 @@ class Board:
         obj.victoryCell = self.victoryCell
         obj.whoseTurn = self.whoseTurn
         return obj
-
-    def move_(self):
-        self.data[1,3]='W'
-
-    def find_lines(board, i, j, player):
-        """
-        Find all the uninterupted lines of stones that would be captured if player
-        plays column i and row j.
-        """
-        lines = []
-        for xdir, ydir in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1],
-                           [-1, 0], [-1, 1]]:
-            u = i
-            v = j
-            line = []
-
-            u += xdir
-            v += ydir
-            found = False
-            while 0 <= u < len(board) and 0 <= v < len(board):
-                if board[v][u] == 0:
-                    break
-                elif board[v][u] == player:
-                    found = True
-                    break
-                else:
-                    line.append((u, v))
-                u += xdir
-                v += ydir
-            if found and line:
-                lines.append(line)
-        return lines
-
-    def play_move(board, player, i, j):
-        new_board = []
-        for row in board:
-            new_board.append(list(row[:]))
-        lines = board.find_lines(board, i, j, player)
-        new_board[j][i] = player
-        for line in lines:
-            for u, v in line:
-                new_board[v][u] = player
-        final = []
-        for row in new_board:
-            final.append(tuple(row))
-        return tuple(final)
-
-    def get_possible_moves(self,color):
-        possible_positions = []
-        for (r, c) in itertools.product(list('12345678'), list('abcdefgh')):
-            if self.isPlaceable(c + r, color):
-                possible_positions.append(c + r)
-        return possible_positions
 
     ###ADD
     def setVictoryCell(self,victoryCell):
@@ -401,7 +347,7 @@ class Board:
     def getData(self):
         return self.data
 
-    def numalpha_To_Numnum(self):
+    def numalpha_To_numnum(self):
         victory_numnum = np.array([[0] * len(self.victoryCell)] * 2)
         for i in range(len(self.victoryCell)):
             alphabet_character, numeric_character = tuple(self.victoryCell[i])

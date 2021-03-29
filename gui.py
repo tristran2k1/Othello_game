@@ -20,9 +20,6 @@ myfont = pygame.font.SysFont('Comic Sans MS', 30)
 textsurface1 = myfont.render('Black Score: ', False, BLACK)
 textsurface2= myfont.render('White Score: ', False, WHITE)
 class GUI:
-    def _delay(self,stop):
-        if stop:
-            os.system("pause")
     def __init__(self, cell, victory_cell):
         self.Screen = pygame.display.set_mode((WINDOWSWIDTH, WINDOWSHEIGHT))
         pygame.display.set_caption('Othello by @T team')
@@ -82,8 +79,6 @@ class GUI:
                         ctypes.windll.user32.MessageBoxW(0,"The winner is:  " + winner, "Congratulation !!", 1)
                         count -= 1
                     FPSClock.tick(FPS)
-
-
         else:
             self.display(self.board, (90, 90))
             pygame.display.flip()

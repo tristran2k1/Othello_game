@@ -1,7 +1,7 @@
 import itertools, random
 from init import *
 from gui import GUI
-
+import os
 
 def bot(victory_cell, cell, you):
     color = 'B' if you == "BLACK" else 'W'
@@ -38,10 +38,14 @@ def callBot_ai(game_info):
     cell.update(lines[3:11])
 
     cell.setVictoryCell(victory_cell)
-    alpha = GUI(cell.getData(),cell.numalpha_To_Numnum())
+    alpha = GUI(cell.getData(), cell.numalpha_To_numnum())
     alpha.drawVictoryCell()
     if "winner" in game_info:
-        winner = lines[16]
+        try:
+            winner = lines[16]
+        except:
+            os.system("pause")
+            return "NULL"
     else:
         winner = None
     alpha.run(winner)
@@ -49,6 +53,7 @@ def callBot_ai(game_info):
         cell.setCurrentPlayer('W')
     else :
         cell.setCurrentPlayer('B')
+
     alpha.run(winner)
     x,y = minimax_decision(cell)
 
@@ -59,17 +64,16 @@ def callBot_ai(game_info):
         alphabet_col = ['a','b','c','d','e','f','g','h']
         result = str(alphabet_col[y])+str(x)
     cell.makeMove(x-1, y)
-    alpha = GUI(cell.getData(),cell.numalpha_To_Numnum())
+    alpha = GUI(cell.getData(), cell.numalpha_To_numnum())
     alpha.drawVictoryCell()
     alpha.run(winner)
     return result
 
-def minimax_decision(board) :
+def minimax_decision(board):
     moveX = []
     moveY = []
     opponent = board.getOpponentPiece()
     numMoves = board.getMoveList(moveX,moveY)
-    #print(numMoves)
     if numMoves == 0:
         x = -1
         y = -1
@@ -131,7 +135,7 @@ def minimaxValue(board, originalTurn, searchPly):
         return best_move_val
 
 def minimaxValueAlphaBeta(board, originalTurn, searchPly, beta, alpha):
-    if (searchPly == 30 ) or board.gameOver(): # Change to desired ply lookahead
+    if (searchPly == 17) or board.gameOver(): # Change to desired ply lookahead
         return board.heuristic(originalTurn) # Termination criteria
 
     moveX = []
@@ -143,7 +147,7 @@ def minimaxValueAlphaBeta(board, originalTurn, searchPly, beta, alpha):
         tempBoard = Board()
         tempBoard = board.copy()
         tempBoard.setCurrentPlayer(opponent)
-        return minimaxValueAlphaBeta(tempBoard, originalTurn, searchPly + 1, beta, alpha);
+        return minimaxValueAlphaBeta(tempBoard, originalTurn, searchPly + 1, beta, alpha)
     else:
         bestMoveVal = -99999
         if originalTurn != board.getWhosePiece():
