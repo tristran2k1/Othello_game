@@ -10,7 +10,5 @@ Install pygame module
 - run client.py
 
 ### Note:
-Run 2 file in two terminal parallel 
-
-remember  module before run program
-
+* Run 2 file in two terminal parallel 
+* No GUI
